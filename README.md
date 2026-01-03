@@ -2,8 +2,7 @@
 
 <img src="public/ccc.webp" alt="CCC" width="380" />
 
-> Merry Christmas!🎄  
-> 认准网址不迷路：[**ccc.byron.wang**](https://ccc.byron.wang)
+> 收藏不迷路：[**ccc.byron.wang**](https://ccc.byron.wang)
 
 ---
 
@@ -11,7 +10,6 @@
 
 - 作者根据坊间**流传数年的古法**设计了本repo
 - 作者通过本repo训练自己的前端能力
-- 作者希望在每个节日给大家带来及时的祝福
 
 ---
 

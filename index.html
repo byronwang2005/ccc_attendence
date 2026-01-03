@@ -1,134 +1,321 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>UNNC中国文化课签到二维码生成器</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <link rel="icon" type="image/svg" href="public/favicon.svg">
   <style>
+    :root {
+      --theme: #10263B;
+      --accent: #37B4B0;
+      --bg-offwhite: #faf6ef;
+      --theme-20: #cfd4d8;
+      --accent-20: #d7f0ef;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      margin: 0;
-      height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background-color: var(--bg-offwhite);
+      color: var(--theme);
+      padding: 16px;
+      max-width: 640px;
+      margin: 0 auto;
+      position: relative;
+    }
+    h2 {
+      font-weight: 700;
+      font-size: 24px;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
       align-items: center;
-      background: linear-gradient(135deg, #0a3d1e, #1e5631);
-      color: white;
-      font-family: "Arial", sans-serif;
+      justify-content: center;
+      gap: 10px;
       text-align: center;
-      overflow: hidden;
+      margin: 24px 0 16px;
+      color: var(--theme);
     }
-    .snow {
-      position: fixed;
-      top: -10px;
-      z-index: -1;
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 16px 0;
+      box-shadow: 0 4px 12px rgba(16, 38, 59, 0.06);
+      border: 1px solid var(--theme-20);
     }
-    h1 {
-      font-size: 3.5em;
-      margin: 0 0 20px;
-      text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+    .card h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--theme);
     }
-    .btn {
-      padding: 12px 32px;
-      font-size: 1.3em;
-      background: #d42426;
+    textarea, input[type="number"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--theme-20);
+      border-radius: 8px;
+      font-size: 15px;
+      background: white;
+      resize: none;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    textarea:focus, input[type="number"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-20);
+    }
+    textarea { min-height: 60px; }
+    .radio-group {
+      display: flex;
+      gap: 20px;
+      margin-top: 8px;
+    }
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    .radio-option input {
+      width: auto;
+      accent-color: var(--accent);
+    }
+    .time-input {
+      display: none;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .time-input.show {
+      display: grid;
+    }
+    .time-input label {
+      font-size: 13px;
+      color: #666;
+      text-align: center;
+    }
+    .time-input input {
+      text-align: center;
+      padding: 10px 0;
+    }
+    button {
+      background: var(--theme);
       color: white;
       border: none;
-      border-radius: 50px;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      width: 100%;
+      margin-top: 8px;
+      transition: background 0.2s, transform 0.1s;
     }
-    .btn:hover {
-      background: #f04e4f;
-      transform: scale(1.05);
+    button:hover {
+      background: #0d1f2f;
+    }
+    button:active {
+      transform: scale(0.99);
+    }
+    #qrcode {
+      text-align: center;
+      margin: 24px 0 16px;
+    }
+    #qrcode canvas {
+      background: var(--theme);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(16, 38, 59, 0.1);
+    }
+    .note {
+      background: var(--accent-20);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 14px;
+      color: var(--theme);
+      line-height: 1.5;
+    }
+    .note a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .note a:hover {
+      text-decoration: underline;
+    }
+
+    /* Snow container */
+    #snow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+      overflow: hidden;
     }
   </style>
 </head>
 <body>
-  <div class="snow" id="snow"></div>
+  <!-- Snow container (always on) -->
+  <div id="snow"></div>
 
-  <h1>🎄Merry Christmas!</h1>
-  <p>老莱祝愿您：<span id="blessing"></span></p>
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const blessings = ["这个冬日，温暖常驻你心间～",
-                       "有爱可依，有光可循～",
-                       "过去一年的奔波有所回响～",
-                       "新岁的希望悄然生长～",
-                       "平安喜乐，不止今日～",
-                       "被善意环绕，与所爱之人共享欢笑～",
-                       "在股市低吸高抛，吃炸吃穿吃麻木～",
-                       "炉火噼啪，茶杯蒸腾，窗外或许有雪，屋内一定有你牵挂的人~",
-                       "被熟悉的笑声治愈，被柔软的时光包裹——冬安，人安，心安~",
-                       "像姜饼人一样被用心烘焙，像圣诞树顶星一样被温柔托举，像拆礼物的孩子一样，永远对明天怀有期待~",
-                       "有留白，有回响，有值得珍藏的小确幸~",
-                       "冬至一阳生，长夜终将尽~",
-                       "雪落无声，爱有回响~"
-    ];
-
-    const el = document.getElementById("blessing");
-    let i = 0;
-    let charIndex = 0;
-    let isDeleting = false;
-    const typeSpeed = 60;
-    const eraseSpeed = 40;
-    const pause = 3000;
-
-    function type() {
-      const current = blessings[i];
-      if (isDeleting) {
-        el.textContent = current.substring(0, --charIndex);
-        if (charIndex === 0) {
-          isDeleting = false;
-          i = (i + 1) % blessings.length;
-          setTimeout(type, pause / 3);
-          return;
-        }
-      } else {
-        el.textContent = current.substring(0, ++charIndex);
-        if (charIndex === current.length) {
-          isDeleting = true;
-          setTimeout(type, pause);
-          return;
-        }
-      }
-      setTimeout(type, isDeleting ? eraseSpeed : typeSpeed);
-    }
-
-    type();
-  });
-
-  document.getElementById("blessing").textContent =
-    blessings[Math.floor(Math.random() * blessings.length)];
-  </script>
+  <h2><img src="public/ccc.webp" alt="CCC" style="height: 100px; width: auto;" />UNNC中国文化课签到二维码生成器</h2>
   
-  <button class="btn" onclick="location.href='main.html'">
-    进入主页 →
-  </button>
+  <div class="note">
+    ·仅限 eduroam / UNNC-living / UNNC_IPSec VPN 环境使用<br>
+    ·有“答题”选项时不要忘记答题<br>
+    ·e.g.若日历下课时间为 20:00 ，则最佳签到时间窗口为 19:50-20:00 <br>
+    ·使用步骤详见 <a href="https://github.com/byronwang2005/CCC-Attendance-QRcode-Generator?tab=readme-ov-file#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8">教程</a>
+  </div>
+
+  <div class="card">
+    <h3>课程详情链接</h3>
+    <textarea id="urlInput" placeholder="https://ccc.nottingham.edu.cn/study/home/details?id=xxxx"></textarea>
+  </div>
+
+  <div class="card">
+    <h3>时间模式</h3>
+    <div class="radio-group">
+      <label class="radio-option">
+        <input type="radio" name="mode" value="auto" checked> 自动
+      </label>
+      <label class="radio-option">
+        <input type="radio" name="mode" value="manual"> 手动
+      </label>
+    </div>
+
+    <div id="manualTime" class="time-input">
+      <div><label>年</label><input type="number" id="year" min="2020" max="2030"></div>
+      <div><label>月</label><input type="number" id="month" min="1" max="12"></div>
+      <div><label>日</label><input type="number" id="day" min="1" max="31"></div>
+      <div><label>时</label><input type="number" id="hour" min="0" max="23"></div>
+      <div><label>分</label><input type="number" id="minute" min="0" max="59"></div>
+    </div>
+  </div>
+
+  <button id="genBtn">生成签到二维码</button>
+
+  <div id="qrcode"></div>
+  <a id="dlLink" style="display:none;"></a>
 
   <script>
-    const snowContainer = document.getElementById('snow');
-    for (let i = 0; i < 50; i++) {
-      const snow = document.createElement('div');
-      snow.style.position = 'absolute';
-      snow.style.left = `${Math.random() * 100}vw`;
-      snow.style.top = `${-10 - Math.random() * 20}px`;
-      snow.style.fontSize = `${Math.random() * 10 + 5}px`;
-      snow.style.opacity = Math.random();
-      snow.innerHTML = '❄';
-      snow.style.animation = `fall ${Math.random() * 5 + 5}s linear infinite`;
-      snow.style.color = 'white';
-      snowContainer.appendChild(snow);
+    // ========== 初始化时间 ==========
+    const now = new Date();
+    document.getElementById('year').value = now.getFullYear();
+    document.getElementById('month').value = now.getMonth() + 1;
+    document.getElementById('day').value = now.getDate();
+    document.getElementById('hour').value = now.getHours();
+    document.getElementById('minute').value = now.getMinutes();
+
+    // ========== 时间模式切换 ==========
+    document.querySelectorAll('input[name="mode"]').forEach(r =>
+      r.addEventListener('change', e => {
+        document.getElementById('manualTime').classList.toggle('show', e.target.value === 'manual');
+      })
+    );
+
+    // ========== 提取 scheduleId ==========
+    function extractScheduleId(url) {
+      const m1 = url.match(/[?&]id=([^&#]+)/);
+      const m2 = url.match(/[?&]scheduleId=([^&#]+)/);
+      return m1 ? m1[1] : (m2 ? m2[1] : null);
     }
-    document.head.insertAdjacentHTML('beforeend', `
-      <style>
-        @keyframes fall {
-          to { transform: translateY(105vh) rotate(360deg); }
-        }
-      </style>
-    `);
+
+    // ========== 获取时间戳 ==========
+    function getTimestamp(mode) {
+      if (mode === 'auto') {
+        return Date.now() + 60 * 1000;
+      } else {
+        const y = parseInt(document.getElementById('year').value);
+        const m = parseInt(document.getElementById('month').value) - 1;
+        const d = parseInt(document.getElementById('day').value);
+        const h = parseInt(document.getElementById('hour').value);
+        const mi = parseInt(document.getElementById('minute').value);
+        const dt = new Date(y, m, d, h, mi);
+        if (isNaN(dt.getTime())) throw new Error('时间无效');
+        return dt.getTime();
+      }
+    }
+
+    // ========== 下载二维码 ==========
+    function downloadCanvas(canvas, filename) {
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.getElementById('dlLink');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }, 'image/png');
+    }
+
+    // ========== 生成二维码 ==========
+    document.getElementById('genBtn').addEventListener('click', () => {
+      const url = document.getElementById('urlInput').value.trim();
+      if (!url) return alert('请先粘贴链接');
+
+      const sid = extractScheduleId(url);
+      if (!sid) return alert('无法提取 scheduleId，请检查链接是否包含 id= 或 scheduleId=');
+
+      const mode = document.querySelector('input[name="mode"]:checked').value;
+      let ts;
+      try {
+        ts = getTimestamp(mode);
+      } catch (e) {
+        return alert('手动时间格式错误（月1-12，日1-31，时0-23）');
+      }
+
+      const attendanceUrl = `https://ccc.nottingham.edu.cn/study/attendance?scheduleId=${sid}&time=${ts}`;
+      document.getElementById('qrcode').innerHTML = '';
+      
+      new QRCode(document.getElementById('qrcode'), {
+        text: attendanceUrl,
+        width: 320,
+        height: 320,
+        colorDark: "#ffffff",
+        colorLight: "#10263B",
+        correctLevel: QRCode.CorrectLevel.L
+      });
+
+      setTimeout(() => {
+        const canvas = document.querySelector('#qrcode canvas');
+        if (canvas) downloadCanvas(canvas, 'qrcode.png');
+      }, 100);
+    });
+
+    //下雪
+    document.addEventListener('DOMContentLoaded', () => {
+      const snowContainer = document.getElementById('snow');
+      if (!snowContainer) return;
+      const styleId = 'auto-snow-keyframes';
+      if (!document.getElementById(styleId)) {
+        const style = document.createElement('style');
+        style.id = styleId;
+        style.textContent = `
+          @keyframes fall {
+            to { transform: translateY(105vh) rotate(var(--rotate)); }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+      for (let i = 0; i < 50; i++) {
+        const snow = document.createElement('div');
+        snow.style.position = 'absolute';
+        snow.style.left = `${Math.random() * 100}vw`;
+        snow.style.top = `${-10 - Math.random() * 20}px`;
+        snow.style.fontSize = `${Math.random() * 10 + 5}px`;
+        snow.style.opacity = 0.3 + Math.random() * 0.7;
+        snow.innerHTML = '❄';
+        snow.style.color = 'white';
+        snow.style.pointerEvents = 'none';
+        snow.style.setProperty('--rotate', `${(Math.random() > 0.5 ? 1 : -1) * 360}deg`);
+        snow.style.animation = `fall ${Math.random() * 5 + 5}s linear infinite`;
+        snowContainer.appendChild(snow);
+      }
+    });
   </script>
 </body>
 </html>
