@@ -12,8 +12,8 @@ def datetime_to_timestamp(year, month, day, hour, minute):
     return int(dt.timestamp() * 1000)
 
 
-def generate_attendance_url(schedule_id, mode='auto', manual_time=None):
-    if mode == 'manual' and manual_time:
+def generate_attendance_url(schedule_id, mode="auto", manual_time=None):
+    if mode == "manual" and manual_time:
         ts = datetime_to_timestamp(*manual_time)
     else:
         ts = int(datetime.datetime.now().timestamp() * 1000 + 60000)
@@ -48,22 +48,66 @@ class QRGeneratorApp:
         style.configure("App.TFrame", background="#faf6ef")
         style.configure("Card.TFrame", background="#ffffff")
         style.configure("TLabel", padding=4, font=("Segoe UI", 11))
-        style.configure("Card.TLabel", background="#ffffff", foreground="#10263B", padding=4, font=("Segoe UI", 12, "bold"))
-        style.configure("Card.TRadiobutton", background="#ffffff", foreground="#10263B", padding=4, font=("Segoe UI", 11))
+        style.configure(
+            "Card.TLabel",
+            background="#ffffff",
+            foreground="#10263B",
+            padding=4,
+            font=("Segoe UI", 12, "bold"),
+        )
+        style.configure(
+            "Card.TRadiobutton",
+            background="#ffffff",
+            foreground="#10263B",
+            padding=4,
+            font=("Segoe UI", 11),
+        )
         style.configure("App.TEntry", fieldbackground="#ffffff")
-        style.configure("Theme.TButton", background="#10263B", foreground="#ffffff", padding=8, font=("Segoe UI", 12))
+        style.configure(
+            "Theme.TButton",
+            background="#10263B",
+            foreground="#ffffff",
+            padding=8,
+            font=("Segoe UI", 12),
+        )
         style.map("Theme.TButton", background=[["active", "#0d1f2f"]])
 
         # ===== 使用说明（固定顶部）=====
         instruction = (
-            "重要提示：仅限 eduroam / UNNC-living / UNNC_IPSec VPN 环境使用"
+            "- 仅限 eduroam / UNNC-living / UNNC_IPSec VPN 环境使用\n"
+            "- 有答题选项时不要忘记答题\n"
+            "- e.g.若日历下课时间为 20:00 ，则最佳签到时间窗口为 19:50-20:00\n"
+            "- 使用步骤详见 教程"
         )
-        note_frame = tk.Frame(root, bg="#d7f0ef", highlightbackground="#37B4B0", highlightthickness=1, bd=0)
-        note_label = tk.Label(note_frame, text=instruction, justify="left", anchor="w", bg="#d7f0ef", fg="#10263B", padx=10, pady=8, wraplength=600)
+        note_frame = tk.Frame(
+            root,
+            bg="#d7f0ef",
+            highlightbackground="#37B4B0",
+            highlightthickness=1,
+            bd=0,
+        )
+        note_label = tk.Label(
+            note_frame,
+            text=instruction,
+            justify="left",
+            anchor="w",
+            bg="#d7f0ef",
+            fg="#10263B",
+            padx=10,
+            pady=8,
+            wraplength=600,
+        )
         note_label.pack(fill="x")
-        link_label = tk.Label(note_frame, text="教程", bg="#d7f0ef", fg="#37B4B0", cursor="hand2")
-        link_label.pack(anchor="w", padx=10, pady=(0,8))
-        link_label.bind("<Button-1>", lambda e: webbrowser.open("https://github.com/byronwang2005/CCC-Attendance-QRcode-Generator/tree/main?tab=readme-ov-file#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8"))
+        link_label = tk.Label(
+            note_frame, text="教程", bg="#d7f0ef", fg="#37B4B0", cursor="hand2"
+        )
+        link_label.pack(anchor="w", padx=10, pady=(0, 8))
+        link_label.bind(
+            "<Button-1>",
+            lambda e: webbrowser.open(
+                "https://github.com/byronwang2005/CCC-Attendance-QRcode-Generator/tree/main?tab=readme-ov-file#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8"
+            ),
+        )
         note_frame.pack(fill="x", padx=15, pady=(10, 10))
 
         # ===== 主内容容器（严格控制顺序）=====
@@ -71,28 +115,78 @@ class QRGeneratorApp:
         main_frame.pack(fill="both", expand=True, padx=20)
 
         # --- 链接输入 ---
-        link_card = tk.Frame(main_frame, bg="#ffffff", highlightbackground="#cfd4d8", highlightthickness=1, bd=0)
-        tk.Label(link_card, text="课程详情链接", bg="#ffffff", fg="#10263B", font=("Segoe UI", 12, "bold")).pack(anchor='w')
-        self.url_entry = tk.Entry(link_card, width=80, relief="solid", bd=1, highlightthickness=2, highlightbackground="#cfd4d8", highlightcolor="#37B4B0")
+        link_card = tk.Frame(
+            main_frame,
+            bg="#ffffff",
+            highlightbackground="#cfd4d8",
+            highlightthickness=1,
+            bd=0,
+        )
+        tk.Label(
+            link_card,
+            text="课程详情链接",
+            bg="#ffffff",
+            fg="#10263B",
+            font=("Segoe UI", 12, "bold"),
+        ).pack(anchor="w")
+        self.url_entry = tk.Entry(
+            link_card,
+            width=80,
+            relief="solid",
+            bd=1,
+            highlightthickness=2,
+            highlightbackground="#cfd4d8",
+            highlightcolor="#37B4B0",
+        )
         self.url_entry.pack(pady=(8, 0), fill="x")
-        self.url_entry.bind("<FocusIn>", lambda e: (self.url_entry.selection_range(0, 'end'), self.url_entry.config(highlightbackground="#37B4B0", highlightcolor="#37B4B0")))
-        self.url_entry.bind("<FocusOut>", lambda e: self.url_entry.config(highlightbackground="#cfd4d8"))
+        self.url_entry.bind(
+            "<FocusIn>",
+            lambda e: (
+                self.url_entry.selection_range(0, "end"),
+                self.url_entry.config(
+                    highlightbackground="#37B4B0", highlightcolor="#37B4B0"
+                ),
+            ),
+        )
+        self.url_entry.bind(
+            "<FocusOut>", lambda e: self.url_entry.config(highlightbackground="#cfd4d8")
+        )
         self.url_entry.focus_set()
         link_card.pack(fill="x", pady=12)
 
         # --- 模式选择 ---
         self.mode = tk.StringVar(value="auto")
-        mode_card = tk.Frame(main_frame, bg="#ffffff", highlightbackground="#cfd4d8", highlightthickness=1, bd=0)
-        tk.Label(mode_card, text="时间模式", bg="#ffffff", fg="#10263B", font=("Segoe UI", 12, "bold")).pack(anchor='w')
+        mode_card = tk.Frame(
+            main_frame,
+            bg="#ffffff",
+            highlightbackground="#cfd4d8",
+            highlightthickness=1,
+            bd=0,
+        )
+        tk.Label(
+            mode_card,
+            text="时间模式",
+            bg="#ffffff",
+            fg="#10263B",
+            font=("Segoe UI", 12, "bold"),
+        ).pack(anchor="w")
         mode_frame = tk.Frame(mode_card, bg="#ffffff")
         mode_frame.pack(pady=(4, 0))
         ttk.Radiobutton(
-            mode_frame, text="自动", variable=self.mode, value="auto",
-            command=self.toggle_time_input, style="Card.TRadiobutton"
+            mode_frame,
+            text="自动",
+            variable=self.mode,
+            value="auto",
+            command=self.toggle_time_input,
+            style="Card.TRadiobutton",
         ).pack(side=tk.LEFT, padx=15)
         ttk.Radiobutton(
-            mode_frame, text="手动", variable=self.mode, value="manual",
-            command=self.toggle_time_input, style="Card.TRadiobutton"
+            mode_frame,
+            text="手动",
+            variable=self.mode,
+            value="manual",
+            command=self.toggle_time_input,
+            style="Card.TRadiobutton",
         ).pack(side=tk.LEFT, padx=15)
         self.time_frame = tk.Frame(mode_card, bg="#ffffff")
         mode_card.pack(fill="x", pady=12)
@@ -105,22 +199,41 @@ class QRGeneratorApp:
         for i, (lbl, default) in enumerate(zip(labels, defaults)):
             row = i // 3
             col = (i % 3) * 2
-            tk.Label(self.time_frame, text=lbl, bg="#ffffff", fg="#10263B").grid(row=row, column=col, padx=2, pady=4)
+            tk.Label(self.time_frame, text=lbl, bg="#ffffff", fg="#10263B").grid(
+                row=row, column=col, padx=2, pady=4
+            )
             width = 5 if "年" in lbl else 4
-            entry = ttk.Entry(self.time_frame, width=width, justify="center", style="App.TEntry")
+            entry = ttk.Entry(
+                self.time_frame, width=width, justify="center", style="App.TEntry"
+            )
             entry.insert(0, str(default))
             entry.grid(row=row, column=col + 1, padx=2, pady=4)
             self.entries.append(entry)
 
         # --- 生成按钮 ---
         self.generate_btn = ttk.Button(
-            main_frame, text="生成签到二维码", command=self.generate_qr, style="Theme.TButton"
+            main_frame,
+            text="生成签到二维码",
+            command=self.generate_qr,
+            style="Theme.TButton",
         )
         self.generate_btn.pack(pady=12, fill="x")
 
         # ===== 二维码显示区域（固定底部）=====
-        qr_card = tk.Frame(root, bg="#ffffff", highlightbackground="#cfd4d8", highlightthickness=1, bd=0)
-        tk.Label(qr_card, text="二维码预览", bg="#ffffff", fg="#10263B", font=("Segoe UI", 12, "bold")).pack(anchor='w')
+        qr_card = tk.Frame(
+            root,
+            bg="#ffffff",
+            highlightbackground="#cfd4d8",
+            highlightthickness=1,
+            bd=0,
+        )
+        tk.Label(
+            qr_card,
+            text="二维码预览",
+            bg="#ffffff",
+            fg="#10263B",
+            font=("Segoe UI", 12, "bold"),
+        ).pack(anchor="w")
         self.qr_label = ttk.Label(qr_card)
         self.qr_label.pack(pady=8)
         qr_card.pack(fill="x", padx=20, pady=(5, 10))
@@ -157,9 +270,14 @@ class QRGeneratorApp:
                     manual_time = tuple(int(entry.get()) for entry in self.entries)
                     datetime.datetime(*manual_time)
                 except (ValueError, TypeError, OverflowError):
-                    messagebox.showerror("时间格式错误", "请检查年月日时分是否填写正确（如：月≤12，日≤31，时<24）")
+                    messagebox.showerror(
+                        "时间格式错误",
+                        "请检查年月日时分是否填写正确（如：月≤12，日≤31，时<24）",
+                    )
                     return
-                attendance_url = generate_attendance_url(schedule_id, mode='manual', manual_time=manual_time)
+                attendance_url = generate_attendance_url(
+                    schedule_id, mode="manual", manual_time=manual_time
+                )
             else:
                 attendance_url = generate_attendance_url(schedule_id)
 
@@ -167,7 +285,10 @@ class QRGeneratorApp:
             self.qr_photo = ImageTk.PhotoImage(img)
             self.qr_label.configure(image=self.qr_photo)
             img.save("qrcode.png")
-            messagebox.showinfo("成功！", f"二维码已保存为当前目录下的 qrcode.png\n\n签到链接：\n{attendance_url}")
+            messagebox.showinfo(
+                "成功！",
+                f"二维码已保存为当前目录下的 qrcode.png\n\n签到链接：\n{attendance_url}",
+            )
 
         except Exception as e:
             messagebox.showerror("错误", f"生成失败：{str(e)}")
