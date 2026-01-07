@@ -26,7 +26,7 @@
 
 >有`答题`选项时不要忘记答题！
 
-- 根据大量失败/成功经验：*e.g.若日历下课时间为`20:00`，则最佳**签到时间窗口为`19:50-20:00`***
+- 根据大量经验：*e.g.若日历下课时间为`20:00`，则最佳**签到时间窗口为`19:50-20:00`***
 
 ### 方法一（网页端，全平台可用）
 
@@ -46,8 +46,8 @@
 1. **前往 [v3.5.3 的 Releases 页面](https://github.com/byronwang2005/CCC-Attendance-QRcode-Generator/releases/tag/v3.5.3)**  
 
 2. 根据你的电脑系统，下载对应文件：
-   - **Windows 用户** → 下载 `CCC_Attendance_Windows_x64.exe`
-   - **Mac 用户** → 下载 `CCC_Attendance_macOS.dmg`
+   - **Windows 用户** → 下载 `CCC_Attendance.exe`
+   - **Mac 用户** → 下载 `CCC_Attendance.dmg`
 
 3. 对于**Mac 用户**：
    - 双击 `CCC Attendance.dmg`
