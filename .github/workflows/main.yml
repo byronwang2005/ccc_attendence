@@ -47,7 +47,7 @@ jobs:
           --exclude-module tkinter.test
           --exclude-module unittest
           --exclude-module pydoc
-          ccc_attendance_with_UI.py
+          main.py
 
       - name: Upload Windows Artifact
         uses: actions/upload-artifact@v4

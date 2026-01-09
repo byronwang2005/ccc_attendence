@@ -4,6 +4,15 @@ from tkinter import ttk, messagebox
 import datetime
 import webbrowser
 from PIL import ImageTk, Image
+import sys
+import os
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 def datetime_to_timestamp(year, month, day, hour, minute):
     dt = datetime.datetime(year, month, day, hour, minute)
@@ -78,7 +87,8 @@ class QRGeneratorApp:
         header_frame.pack(fill="x", pady=(20, 10))
         
         try:
-            logo_img = Image.open("public/ccc.webp")
+            logo_path = resource_path("public/ccc.webp")
+            logo_img = Image.open(logo_path)
             aspect_ratio = logo_img.width / logo_img.height
             new_height = 100
             new_width = int(new_height * aspect_ratio)
