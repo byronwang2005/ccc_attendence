@@ -41,9 +41,9 @@
 
 ### 方法二（桌面端）
 
-> 仅在指定版本的 **Releases页面** 中提供
+> 仅在指定版本提供
 
-1. **前往 [v3.5.3 的 Releases 页面](https://github.com/byronwang2005/CCC-Attendance-QRcode-Generator/releases/tag/v3.5.3)**  
+1. **前往 [v3.5.4 的 Releases 页面](https://github.com/byronwang2005/CCC-Attendance-QRcode-Generator/releases/tag/v3.5.4)**  
 
 2. 根据你的电脑系统，下载对应文件：
    - **Windows 用户** → 下载 `CCC_Attendance.exe`
