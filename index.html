@@ -144,24 +144,9 @@
     .note a:hover {
       text-decoration: underline;
     }
-
-    /* Snow container */
-    #snow {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 9999;
-      overflow: hidden;
-    }
   </style>
 </head>
 <body>
-  <!-- Snow container (always on) -->
-  <div id="snow"></div>
-
   <h2><img src="public/ccc.webp" alt="CCC" style="height: 100px; width: auto;" />UNNC中国文化课签到二维码生成器</h2>
   
   <div class="note">
@@ -202,7 +187,6 @@
   <a id="dlLink" style="display:none;"></a>
 
   <script>
-    // ========== 初始化时间 ==========
     const now = new Date();
     document.getElementById('year').value = now.getFullYear();
     document.getElementById('month').value = now.getMonth() + 1;
@@ -210,21 +194,18 @@
     document.getElementById('hour').value = now.getHours();
     document.getElementById('minute').value = now.getMinutes();
 
-    // ========== 时间模式切换 ==========
     document.querySelectorAll('input[name="mode"]').forEach(r =>
       r.addEventListener('change', e => {
         document.getElementById('manualTime').classList.toggle('show', e.target.value === 'manual');
       })
     );
 
-    // ========== 提取 scheduleId ==========
     function extractScheduleId(url) {
       const m1 = url.match(/[?&]id=([^&#]+)/);
       const m2 = url.match(/[?&]scheduleId=([^&#]+)/);
       return m1 ? m1[1] : (m2 ? m2[1] : null);
     }
 
-    // ========== 获取时间戳 ==========
     function getTimestamp(mode) {
       if (mode === 'auto') {
         return Date.now() + 60 * 1000;
@@ -240,7 +221,6 @@
       }
     }
 
-    // ========== 下载二维码 ==========
     function downloadCanvas(canvas, filename) {
       canvas.toBlob(blob => {
         const url = URL.createObjectURL(blob);
@@ -252,7 +232,6 @@
       }, 'image/png');
     }
 
-    // ========== 生成二维码 ==========
     document.getElementById('genBtn').addEventListener('click', () => {
       const url = document.getElementById('urlInput').value.trim();
       if (!url) return alert('请先粘贴链接');
@@ -284,37 +263,6 @@
         const canvas = document.querySelector('#qrcode canvas');
         if (canvas) downloadCanvas(canvas, 'qrcode.png');
       }, 100);
-    });
-
-    //下雪
-    document.addEventListener('DOMContentLoaded', () => {
-      const snowContainer = document.getElementById('snow');
-      if (!snowContainer) return;
-      const styleId = 'auto-snow-keyframes';
-      if (!document.getElementById(styleId)) {
-        const style = document.createElement('style');
-        style.id = styleId;
-        style.textContent = `
-          @keyframes fall {
-            to { transform: translateY(105vh) rotate(var(--rotate)); }
-          }
-        `;
-        document.head.appendChild(style);
-      }
-      for (let i = 0; i < 50; i++) {
-        const snow = document.createElement('div');
-        snow.style.position = 'absolute';
-        snow.style.left = `${Math.random() * 100}vw`;
-        snow.style.top = `${-10 - Math.random() * 20}px`;
-        snow.style.fontSize = `${Math.random() * 10 + 5}px`;
-        snow.style.opacity = 0.3 + Math.random() * 0.7;
-        snow.innerHTML = '❄';
-        snow.style.color = 'white';
-        snow.style.pointerEvents = 'none';
-        snow.style.setProperty('--rotate', `${(Math.random() > 0.5 ? 1 : -1) * 360}deg`);
-        snow.style.animation = `fall ${Math.random() * 5 + 5}s linear infinite`;
-        snowContainer.appendChild(snow);
-      }
     });
   </script>
 </body>

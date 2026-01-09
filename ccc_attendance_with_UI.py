@@ -3,14 +3,11 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import datetime
 import webbrowser
-from PIL import ImageTk
+from PIL import ImageTk, Image
 
-
-# ------------------ 工具函数 ------------------
 def datetime_to_timestamp(year, month, day, hour, minute):
     dt = datetime.datetime(year, month, day, hour, minute)
     return int(dt.timestamp() * 1000)
-
 
 def generate_attendance_url(schedule_id, mode="auto", manual_time=None):
     if mode == "manual" and manual_time:
@@ -18,7 +15,6 @@ def generate_attendance_url(schedule_id, mode="auto", manual_time=None):
     else:
         ts = int(datetime.datetime.now().timestamp() * 1000 + 60000)
     return f"https://ccc.nottingham.edu.cn/study/attendance?scheduleId={schedule_id}&time={ts}"
-
 
 def make_qr_image(url):
     qr = qrcode.QRCode(
@@ -29,21 +25,19 @@ def make_qr_image(url):
     )
     qr.add_data(url)
     qr.make(fit=True)
-    return qr.make_image(fill_color="white", back_color="#10263B")  # 诺丁蓝
+    return qr.make_image(fill_color="white", back_color="#10263B")
 
-
-# ------------------ GUI 主程序 ------------------
 class QRGeneratorApp:
     def __init__(self, root):
         self.root = root
         root.title("UNNC中国文化课签到二维码生成器")
-        root.geometry("640x820")
+        root.geometry("640x920")
         root.resizable(False, False)
         root.configure(bg="#faf6ef")
         style = ttk.Style()
         try:
             style.theme_use("clam")
-        except:
+        except Exception:
             pass
         style.configure("App.TFrame", background="#faf6ef")
         style.configure("Card.TFrame", background="#ffffff")
@@ -72,7 +66,30 @@ class QRGeneratorApp:
         )
         style.map("Theme.TButton", background=[["active", "#0d1f2f"]])
 
-        # ===== 使用说明（固定顶部）=====
+        header_frame = tk.Frame(root, bg="#faf6ef")
+        header_frame.pack(fill="x", pady=(20, 10))
+        
+        try:
+            logo_img = Image.open("public/ccc.webp")
+            aspect_ratio = logo_img.width / logo_img.height
+            new_height = 100
+            new_width = int(new_height * aspect_ratio)
+            logo_img = logo_img.resize((new_width, new_height), Image.Resampling.LANCZOS)
+            self.logo_photo = ImageTk.PhotoImage(logo_img)
+            logo_label = tk.Label(header_frame, image=self.logo_photo, bg="#faf6ef")
+            logo_label.pack()
+        except Exception as e:
+            print(f"无法加载 Logo: {e}")
+
+        title_label = tk.Label(
+            header_frame, 
+            text="UNNC中国文化课签到二维码生成器",
+            font=("Segoe UI", 16, "bold"),
+            bg="#faf6ef",
+            fg="#10263B"
+        )
+        title_label.pack(pady=(10, 0))
+
         instruction = (
             "- 仅限 eduroam / UNNC-living / UNNC_IPSec VPN 环境使用\n"
             "- 有答题选项时不要忘记答题\n"
@@ -110,11 +127,9 @@ class QRGeneratorApp:
         )
         note_frame.pack(fill="x", padx=15, pady=(10, 10))
 
-        # ===== 主内容容器（严格控制顺序）=====
         main_frame = tk.Frame(root, bg="#faf6ef")
         main_frame.pack(fill="both", expand=True, padx=20)
 
-        # --- 链接输入 ---
         link_card = tk.Frame(
             main_frame,
             bg="#ffffff",
@@ -154,7 +169,6 @@ class QRGeneratorApp:
         self.url_entry.focus_set()
         link_card.pack(fill="x", pady=12)
 
-        # --- 模式选择 ---
         self.mode = tk.StringVar(value="auto")
         mode_card = tk.Frame(
             main_frame,
@@ -191,7 +205,6 @@ class QRGeneratorApp:
         self.time_frame = tk.Frame(mode_card, bg="#ffffff")
         mode_card.pack(fill="x", pady=12)
 
-        # --- 手动时间输入框（不 pack，仅创建）---
         labels = ["年:", "月:", "日:", "时:", "分:"]
         now = datetime.datetime.now()
         defaults = [now.year, now.month, now.day, now.hour, now.minute]
@@ -210,7 +223,6 @@ class QRGeneratorApp:
             entry.grid(row=row, column=col + 1, padx=2, pady=4)
             self.entries.append(entry)
 
-        # --- 生成按钮 ---
         self.generate_btn = ttk.Button(
             main_frame,
             text="生成签到二维码",
@@ -219,7 +231,6 @@ class QRGeneratorApp:
         )
         self.generate_btn.pack(pady=12, fill="x")
 
-        # ===== 二维码显示区域（固定底部）=====
         qr_card = tk.Frame(
             root,
             bg="#ffffff",
@@ -240,7 +251,7 @@ class QRGeneratorApp:
 
     def toggle_time_input(self):
         if self.mode.get() == "manual":
-            self.time_frame.pack(pady=8)  # 插入到按钮上方
+            self.time_frame.pack(pady=8)
         else:
             self.time_frame.pack_forget()
 
@@ -293,8 +304,6 @@ class QRGeneratorApp:
         except Exception as e:
             messagebox.showerror("错误", f"生成失败：{str(e)}")
 
-
-# ------------------ 启动 ------------------
 if __name__ == "__main__":
     root = tk.Tk()
     app = QRGeneratorApp(root)
