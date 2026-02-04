@@ -3,3 +3,4 @@
 ._*
 qrcode.png
 __pycache__/
+.shared/
