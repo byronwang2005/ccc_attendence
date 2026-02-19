@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="UNNC中国文化课签到二维码生成器 - 快速生成签到二维码">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="theme-color" content="#10263B">
-  <meta http-equiv="Cache-Control" content="max-age=31536000, public">
-  <title>UNNC中国文化课签到二维码生成器</title>
-  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
-  <link rel="preload" href="ccc.webp" as="image" type="image/webp">
-  <link rel="icon" type="image/svg" href="favicon.svg">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="UNNC中国文化课签到二维码生成器 - 快速生成签到二维码">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="theme-color" content="#10263B">
+    <meta http-equiv="Cache-Control" content="max-age=31536000, public">
+    <title>UNNC中国文化课签到二维码生成器</title>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preload" href="ccc.webp" as="image" type="image/webp">
+    <link rel="icon" type="image/svg" href="favicon.svg">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   <style>
     :root {
       --theme: #10263B;
@@ -29,10 +30,21 @@
       --text-secondary: #5a6b7a;
       --shadow: rgba(16, 38, 59, 0.06);
       --shadow-strong: rgba(16, 38, 59, 0.1);
+      --transition-fast: 0.15s;
+      --transition-normal: 0.2s;
+      --transition-slow: 0.3s;
+      --radius-sm: 4px;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+      --radius-xl: 12px;
     }
     
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background-color: var(--bg-offwhite);
@@ -41,6 +53,12 @@
       max-width: 640px;
       margin: 0 auto;
       min-height: 100vh;
+      opacity: 0;
+      transition: opacity var(--transition-normal);
+    }
+
+    body.loaded {
+      opacity: 1;
     }
     
     header {
@@ -65,7 +83,7 @@
 
     .card {
       background: var(--white);
-      border-radius: 12px;
+      border-radius: var(--radius-xl);
       padding: 20px;
       margin: 16px 0;
       box-shadow: 0 4px 12px var(--shadow);
@@ -83,17 +101,22 @@
       width: 100%;
       padding: 12px 16px;
       border: 1px solid var(--theme-20);
-      border-radius: 8px;
+      border-radius: var(--radius-lg);
       font-size: 15px;
       background: var(--white);
       resize: none;
       outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
     }
     
     textarea:focus, input[type="number"]:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 2px var(--accent-20);
+      box-shadow: 0 0 0 3px var(--accent-20);
+    }
+
+    textarea:focus-visible, input[type="number"]:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
     }
     
     textarea { min-height: 60px; }
@@ -147,40 +170,75 @@
       color: white;
       border: none;
       padding: 14px;
-      border-radius: 8px;
+      border-radius: var(--radius-lg);
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
       width: 100%;
       margin-top: 8px;
-      transition: background 0.2s, transform 0.1s;
+      transition: background var(--transition-normal), transform var(--transition-fast), opacity var(--transition-normal);
     }
     
-    .btn-primary:hover {
+    .btn-primary:hover:not(:disabled) {
       background: var(--theme-dark);
     }
     
-    .btn-primary:active {
+    .btn-primary:active:not(:disabled) {
       transform: scale(0.99);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-primary:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
     }
     
     #qrcode {
       display: flex;
       justify-content: center;
       margin: 24px 0 16px;
+      min-height: 200px;
+      align-items: center;
     }
     
-    #qrcode canvas {
+    #qrcode canvas, #qrcode img {
       background: var(--theme);
-      border-radius: 12px;
+      border-radius: var(--radius-xl);
       padding: 16px;
       box-shadow: 0 4px 12px var(--shadow-strong);
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 4px solid var(--theme-20);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-secondary);
+      font-size: 14px;
     }
     
     .note {
       background: var(--accent-20);
       border: 1px solid var(--accent);
-      border-radius: 8px;
+      border-radius: var(--radius-lg);
       padding: 16px;
       font-size: 14px;
       color: var(--theme);
@@ -194,17 +252,22 @@
     .note li {
       padding: 8px 12px;
       background: var(--white-60);
-      border-radius: 6px;
+      border-radius: var(--radius-md);
       margin-bottom: 8px;
       font-size: 14px;
       line-height: 1.6;
     }
     
     .note li::before {
-      content: "→";
+      content: "";
+      display: inline-block;
+      width: 16px;
+      height: 16px;
       margin-right: 8px;
-      color: var(--accent);
-      font-weight: 600;
+      vertical-align: text-bottom;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2337B4B0'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M9 5l7 7-7 7'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
     }
     
     .note li:last-child {
@@ -273,11 +336,11 @@
       border: 2px solid var(--accent);
       background: var(--white);
       color: var(--accent);
-      border-radius: 6px;
+      border-radius: var(--radius-md);
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all var(--transition-normal);
     }
 
     .identity-btn:hover {
@@ -299,35 +362,158 @@
       background: var(--accent);
       color: var(--white);
       border: none;
-      border-radius: 4px;
+      border-radius: var(--radius-sm);
       font-size: 13px;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: background var(--transition-normal), transform var(--transition-fast);
     }
 
-    .copy-btn:hover {
+    .copy-btn:hover:not(:disabled) {
       background: var(--accent-dark);
     }
 
-    .copy-btn:active {
+    .copy-btn:active:not(:disabled) {
       transform: scale(0.98);
+    }
+
+    .copy-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--theme);
+      color: var(--white);
+      padding: 12px 20px;
+      border-radius: var(--radius-lg);
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 4px 16px var(--shadow-strong);
+      opacity: 0;
+      transition: transform var(--transition-slow), opacity var(--transition-slow);
+      z-index: 1000;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .toast.error {
+      background: #dc2626;
+    }
+
+    .toast.success {
+      background: var(--accent);
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 12px;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      .logo {
+        height: 80px;
+      }
+
+      .card {
+        padding: 16px;
+        margin: 12px 0;
+        border-radius: var(--radius-lg);
+      }
+
+      .card h2 {
+        font-size: 15px;
+      }
+
+      .time-input {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+      }
+
+      .time-input label {
+        font-size: 12px;
+      }
+
+      .identity-buttons {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .btn-primary {
+        padding: 12px;
+        font-size: 15px;
+        border-radius: var(--radius-md);
+      }
+
+      .note li {
+        padding: 6px 10px;
+        font-size: 13px;
+        border-radius: var(--radius-sm);
+      }
+
+      .agent-command {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        border-radius: var(--radius-md);
+      }
+
+      .agent-command .copy-btn {
+        width: 100%;
+        border-radius: var(--radius-md);
+      }
+
+      .toast {
+        left: 12px;
+        right: 12px;
+        transform: translateY(100px);
+        border-radius: var(--radius-md);
+      }
+
+      .toast.show {
+        transform: translateY(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
     }
 
     .agent-hint {
       font-size: 14px;
       color: var(--theme);
       margin-bottom: 8px;
-      padding: 8px 12px;
+      padding: 8px 12px 8px 32px;
       background: var(--white-60);
-      border-radius: 6px;
+      border-radius: var(--radius-md);
       line-height: 1.6;
+      position: relative;
     }
 
     .agent-hint::before {
-      content: "→";
-      margin-right: 8px;
-      color: var(--accent);
-      font-weight: 600;
+      content: "";
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2337B4B0'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M9 5l7 7-7 7'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
     }
 
     .agent-text {
@@ -438,20 +624,35 @@
   </main>
 
   <footer>
-    <p>
-      Licensed under <a href="LICENSE" target="_blank">MIT License</a> | 
-      Opensourced in <a href="https://github.com/byronwang2005/CCC-Attendance-QRcode-Generator" target="_blank" rel="noopener noreferrer">GitHub Repository</a> | 
-      Developed by <a href="https://byron.wang" target="_blank" rel="noopener noreferrer">Byron Wang</a>
-    </p>
-  </footer>
+      <p>
+        Licensed under <a href="LICENSE" target="_blank">MIT License</a> | 
+        Opensourced in <a href="https://github.com/byronwang2005/CCC-Attendance-QRcode-Generator" target="_blank" rel="noopener noreferrer">GitHub Repository</a> | 
+        Developed by <a href="https://byron.wang" target="_blank" rel="noopener noreferrer">Byron Wang</a>
+      </p>
+    </footer>
+
+    <div id="toast" class="toast" role="alert" aria-live="polite"></div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      requestAnimationFrame(() => {
+        document.body.classList.add('loaded');
+      });
       const now = new Date();
       
       const setInputValue = (id, value) => {
         const el = document.getElementById(id);
         if (el) el.value = value;
+      };
+
+      const showToast = (message, type = 'success') => {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = `toast ${type} show`;
+        
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 3000);
       };
 
       setInputValue('year', now.getFullYear());
@@ -495,20 +696,24 @@
         });
       });
 
-      document.getElementById('copyAgentText').addEventListener('click', () => {
+      document.getElementById('copyAgentText').addEventListener('click', async () => {
         const text = 'Read the instruction in "https://ccc.byron.wang/agent.md"';
-        navigator.clipboard.writeText(text).then(() => {
-          const btn = document.getElementById('copyAgentText');
+        const btn = document.getElementById('copyAgentText');
+        
+        try {
+          await navigator.clipboard.writeText(text);
           const originalText = btn.textContent;
           btn.textContent = '已复制!';
-          btn.style.background = 'var(--accent-dark)';
+          btn.disabled = true;
+          showToast('复制成功！');
+          
           setTimeout(() => {
             btn.textContent = originalText;
-            btn.style.background = '';
-          }, 2000);
-        }).catch(() => {
-          alert('复制失败，请手动复制');
-        });
+            btn.disabled = false;
+          }, 3000);
+        } catch {
+          showToast('复制失败，请手动复制', 'error');
+        }
       });
 
       const getTimestamp = (mode) => {
@@ -537,10 +742,11 @@
 
       document.getElementById('genBtn').addEventListener('click', async () => {
         const urlInput = document.getElementById('urlInput');
+        const genBtn = document.getElementById('genBtn');
         const url = urlInput.value.trim();
         
         if (!url) {
-          alert('请先粘贴链接');
+          showToast('请先粘贴链接', 'error');
           urlInput.focus();
           return;
         }
@@ -549,12 +755,15 @@
         let ts;
         try {
           ts = getTimestamp(mode);
-        } catch (e) {
-          return alert('手动时间格式错误（月1-12，日1-31，时0-23）');
+        } catch {
+          showToast('手动时间格式错误（月1-12，日1-31，时0-23）', 'error');
+          return;
         }
 
         const qrcodeContainer = document.getElementById('qrcode');
-        qrcodeContainer.innerHTML = '<p>正在生成...</p>';
+        qrcodeContainer.innerHTML = '<div class="loading-text"><div class="loading-spinner"></div><span>正在生成二维码...</span></div>';
+        genBtn.disabled = true;
+        genBtn.textContent = '生成中...';
 
         try {
           const response = await fetch('/api/generate', {
@@ -581,16 +790,18 @@
           img.style.height = "auto";
           qrcodeContainer.appendChild(img);
 
-          // Auto download after a short delay
           setTimeout(() => {
             downloadImage(qrBase64, 'qrcode.png');
-            alert('温馨提示：如果有"答题"选项，请记得完成答题哦！');
+            showToast('二维码已生成并下载！温馨提示：如果有"答题"选项，请记得完成答题哦！');
           }, 500);
 
         } catch (e) {
           console.error('QR Code generation failed:', e);
-          qrcodeContainer.innerHTML = ''; // Clear "generating..." text
-          alert('二维码生成失败：' + e.message);
+          qrcodeContainer.innerHTML = '';
+          showToast('二维码生成失败：' + e.message, 'error');
+        } finally {
+          genBtn.disabled = false;
+          genBtn.textContent = '生成签到二维码';
         }
       });
     });
