@@ -72,6 +72,7 @@ curl -X POST https://ccc.byron.wang/api/generate \
 **Agent 应该**：
 1. 将 `qrCodeBase64` 字段的值提供给用户
 2. 告知用户可以将其保存为图片文件，或直接在浏览器中打开查看
+3. 提示用户使用手机微信扫描二维码
 
 ## 常见问题解答
 

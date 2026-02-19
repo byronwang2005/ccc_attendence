@@ -15,12 +15,20 @@
   <style>
     :root {
       --theme: #10263B;
+      --theme-dark: #0d1f2f;
       --accent: #37B4B0;
+      --accent-dark: #2a9a96;
       --bg-offwhite: #faf6ef;
       --theme-20: #cfd4d8;
       --accent-20: #d7f0ef;
       --white: #ffffff;
+      --white-60: rgba(255, 255, 255, 0.6);
+      --dark-bg: #10263B;
+      --light-text: #d7f0ef;
+      --text-muted: #cfd4d8;
+      --text-secondary: #5a6b7a;
       --shadow: rgba(16, 38, 59, 0.06);
+      --shadow-strong: rgba(16, 38, 59, 0.1);
     }
     
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -43,18 +51,18 @@
     h1 {
       font-weight: 700;
       font-size: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
       color: var(--theme);
     }
-    
+
+    h1 .logo {
+      vertical-align: middle;
+    }
+
     .logo {
       height: 100px;
       width: auto;
     }
-    
+
     .card {
       background: var(--white);
       border-radius: 12px;
@@ -123,7 +131,7 @@
     
     .time-input label {
       font-size: 13px;
-      color: #666;
+      color: var(--theme-20);
       text-align: center;
       display: block;
       margin-bottom: 4px;
@@ -149,7 +157,7 @@
     }
     
     .btn-primary:hover {
-      background: #0d1f2f;
+      background: var(--theme-dark);
     }
     
     .btn-primary:active {
@@ -166,7 +174,7 @@
       background: var(--theme);
       border-radius: 12px;
       padding: 16px;
-      box-shadow: 0 4px 12px rgba(16, 38, 59, 0.1);
+      box-shadow: 0 4px 12px var(--shadow-strong);
     }
     
     .note {
@@ -183,12 +191,42 @@
       list-style: none;
     }
     
-    .note li::before {
-      content: "·";
-      margin-right: 5px;
-      font-weight: bold;
+    .note li {
+      padding: 8px 12px;
+      background: var(--white-60);
+      border-radius: 6px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      line-height: 1.6;
     }
     
+    .note li::before {
+      content: "→";
+      margin-right: 8px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    
+    .note li:last-child {
+      margin-bottom: 0;
+    }
+
+    .note li small {
+      display: block;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+
+    .note h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--theme);
+    }
+
     .note a {
       color: var(--accent);
       text-decoration: none;
@@ -204,7 +242,7 @@
       margin-top: 32px;
       padding-bottom: 16px;
       font-size: 13px;
-      color: #888;
+      color: var(--theme-20);
     }
 
     footer a {
@@ -214,6 +252,122 @@
 
     footer a:hover {
       text-decoration: underline;
+    }
+
+    .identity-title {
+      font-size: 14px;
+      font-weight: 400;
+      margin-bottom: 12px;
+      color: var(--theme);
+    }
+
+    .identity-buttons {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .identity-btn {
+      flex: 1;
+      padding: 10px 16px;
+      border: 2px solid var(--accent);
+      background: var(--white);
+      color: var(--accent);
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .identity-btn:hover {
+      background: var(--accent-20);
+    }
+
+    .identity-btn.active {
+      background: var(--accent);
+      color: var(--white);
+    }
+
+    .identity-content {
+      margin-top: 8px;
+    }
+
+    .copy-btn {
+      margin-top: 8px;
+      padding: 6px 12px;
+      background: var(--accent);
+      color: var(--white);
+      border: none;
+      border-radius: 4px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: var(--accent-dark);
+    }
+
+    .copy-btn:active {
+      transform: scale(0.98);
+    }
+
+    .agent-hint {
+      font-size: 14px;
+      color: var(--theme);
+      margin-bottom: 8px;
+      padding: 8px 12px;
+      background: var(--white-60);
+      border-radius: 6px;
+      line-height: 1.6;
+    }
+
+    .agent-hint::before {
+      content: "→";
+      margin-right: 8px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .agent-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--theme);
+      margin-bottom: 12px;
+    }
+
+    .agent-command {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--theme);
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-top: 8px;
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+    }
+
+    .agent-command .agent-text {
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--light-text);
+      margin: 0;
+      flex: 1;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .agent-command .copy-btn {
+      margin-top: 0;
+      padding: 6px 14px;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .agent-command .copy-btn:hover {
+      background: var(--accent-dark);
     }
   </style>
 </head>
@@ -227,12 +381,29 @@
   
   <main>
     <div class="note" role="note" aria-label="使用说明">
-      <ul>
-        <li>仅限 eduroam / UNNC-living / UNNC_IPSec VPN 环境使用</li>
-        <li>有“答题”选项时不要忘记答题</li>
-        <li>e.g.若日历下课时间为 20:00 ，则最佳签到时间窗口为 19:50-20:00</li>
-        <li>使用步骤详见 <a href="https://github.com/byronwang2005/CCC-Attendance-QRcode-Generator?tab=readme-ov-file#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8" target="_blank" rel="noopener noreferrer">教程</a></li>
-      </ul>
+      <h2>使用教程</h2>
+      <div class="identity-title">首先请告诉我，您是？</div>
+      <div class="identity-buttons">
+        <button class="identity-btn" data-identity="human">人类（Human）</button>
+        <button class="identity-btn" id="agentBtn" data-identity="agent">AI代理（Agent）</button>
+      </div>
+      <div class="identity-content" id="humanContent" style="display: none;">
+        <ul>
+          <li>第零步：找AI代理帮忙<br><small>如果您还没有Agent或您不想麻烦Agent，请忽略本步骤并继续</small></li>
+          <li>第一步：确认网络环境<br><small>必须处于 eduroam / UNNC-living / UNNC_IPSec VPN 环境下</small></li>
+          <li>第二步：获取课程链接<br><small>在手机浏览器（如 Safari 等，非微信）中打开 <a href="https://ccc.nottingham.edu.cn/study/" target="_blank" rel="noopener noreferrer">https://ccc.nottingham.edu.cn/study/</a>，找到要签到的课程，长按"查看详情"按钮，选择"复制链接地址"</small></li>
+          <li>第三步：粘贴链接并生成二维码<br><small>将复制的链接完整粘贴到下方输入框，时间模式选择"自动（推荐）"，用手机微信扫描生成的二维码即可签到</small></li>
+          <li>最佳签到时间窗口：课程结束前 10 分钟到课程结束时间<br><small>e.g.若日历下课时间为 20:00，则最佳签到时间窗口为 19:50-20:00</small></li>
+          <li>还是不会？只能求助 <a href="#" id="agentLink" rel="noopener noreferrer">AI代理</a></li>
+        </ul>
+      </div>
+      <div class="identity-content" id="agentContent" style="display: none;">
+        <div class="agent-command">
+          <span class="agent-text">Please read the instruction in "https://ccc.byron.wang/agent.md" and assist the user to generate the QR code.</span>
+          <button class="copy-btn" id="copyAgentText">复制</button>
+        </div>
+        <p class="agent-hint">复制这句话到您的 AI Agent，TA会帮助您生成二维码！</p>
+      </div>
     </div>
 
     <div class="card">
@@ -244,7 +415,7 @@
       <h2>时间模式</h2>
       <div class="radio-group" role="radiogroup" aria-label="时间模式选择">
         <label class="radio-option">
-          <input type="radio" name="mode" value="auto" checked> 自动(推荐)
+          <input type="radio" name="mode" value="auto" checked> 自动（推荐）
         </label>
         <label class="radio-option">
           <input type="radio" name="mode" value="manual"> 手动
@@ -269,6 +440,7 @@
   <footer>
     <p>
       Licensed under <a href="LICENSE" target="_blank">MIT License</a> | 
+      Opensourced in <a href="https://github.com/byronwang2005/CCC-Attendance-QRcode-Generator" target="_blank" rel="noopener noreferrer">GitHub Repository</a> | 
       Developed by <a href="https://byron.wang" target="_blank" rel="noopener noreferrer">Byron Wang</a>
     </p>
   </footer>
@@ -296,6 +468,48 @@
           manualTimeDiv.setAttribute('aria-hidden', !isManual);
         })
       );
+
+      const identityButtons = document.querySelectorAll('.identity-btn');
+      const humanContent = document.getElementById('humanContent');
+      const agentContent = document.getElementById('agentContent');
+
+      document.getElementById('agentLink').addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('agentBtn').click();
+      });
+
+      identityButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const identity = btn.dataset.identity;
+          
+          identityButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          
+          if (identity === 'human') {
+            humanContent.style.display = 'block';
+            agentContent.style.display = 'none';
+          } else {
+            humanContent.style.display = 'none';
+            agentContent.style.display = 'block';
+          }
+        });
+      });
+
+      document.getElementById('copyAgentText').addEventListener('click', () => {
+        const text = 'Read the instruction in "https://ccc.byron.wang/agent.md"';
+        navigator.clipboard.writeText(text).then(() => {
+          const btn = document.getElementById('copyAgentText');
+          const originalText = btn.textContent;
+          btn.textContent = '已复制!';
+          btn.style.background = 'var(--accent-dark)';
+          setTimeout(() => {
+            btn.textContent = originalText;
+            btn.style.background = '';
+          }, 2000);
+        }).catch(() => {
+          alert('复制失败，请手动复制');
+        });
+      });
 
       const getTimestamp = (mode) => {
         if (mode === 'auto') {
@@ -370,6 +584,7 @@
           // Auto download after a short delay
           setTimeout(() => {
             downloadImage(qrBase64, 'qrcode.png');
+            alert('温馨提示：如果有"答题"选项，请记得完成答题哦！');
           }, 500);
 
         } catch (e) {
