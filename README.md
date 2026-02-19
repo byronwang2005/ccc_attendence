@@ -1,4 +1,4 @@
-# CCC Attendance QRcode Generator  
+# UNNC中国文化课签到二维码生成器
 
 <img src="public/ccc.webp" alt="CCC" width="380" />
 
