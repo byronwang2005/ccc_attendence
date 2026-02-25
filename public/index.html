@@ -5,14 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content="UNNC中国文化课签到二维码生成器 - 快速生成签到二维码">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="theme-color" content="">
+    <meta name="theme-color" content="#0f2437">
     <meta http-equiv="Cache-Control" content="max-age=31536000, public">
     <title>UNNC中国文化课签到二维码生成器</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="preload" href="ccc-small.webp" as="image" type="image/webp">
     <link rel="icon" type="image/svg" href="favicon.svg">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     :root {
       --theme: #0f2437;
       --theme-dark: #0b1c2b;
@@ -76,14 +79,8 @@
       margin: 0 auto;
       min-height: 100vh;
       line-height: 1.7;
-      opacity: 0;
-      transition: opacity var(--transition-normal), background var(--transition-slow);
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
-    }
-
-    body.loaded {
-      opacity: 1;
     }
     
     header {
@@ -768,7 +765,7 @@
 <body>
   <header>
     <h1>
-      <img src="ccc-small.webp" alt="CCC Logo" class="logo" loading="eager" decoding="async" fetchpriority="high" width="100" height="100" />
+      <img src="ccc-small.webp" alt="CCC Logo" class="logo" loading="eager" fetchpriority="high" width="100" height="100" />
       UNNC中国文化课签到二维码生成器
     </h1>
   </header>
@@ -848,13 +845,6 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const themeMeta = document.querySelector('meta[name="theme-color"]');
-      if (themeMeta) {
-        themeMeta.setAttribute('content', getComputedStyle(document.documentElement).getPropertyValue('--theme').trim());
-      }
-      requestAnimationFrame(() => {
-        document.body.classList.add('loaded');
-      });
       const now = new Date();
       
       const setInputValue = (id, value) => {
