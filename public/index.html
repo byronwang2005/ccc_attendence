@@ -780,12 +780,12 @@
       </div>
       <div class="identity-content" id="humanContent" style="display: none;">
         <ul>
-          <li>第〇步：找 <a href="#" id="agentLink" rel="noopener noreferrer">AI代理</a> 帮忙<br><small>如果您还没有Agent或您不想麻烦Agent，请忽略本步骤并继续</small></li>
+          <li>第〇步：找 <a href="#" class="agent-link" rel="noopener noreferrer">AI代理</a> 帮忙<br><small>如果您还没有Agent或您不想麻烦Agent，请忽略本步骤并继续</small></li>
           <li>第一步：确认网络环境<br><small>必须处于 eduroam / UNNC-living / UNNC_IPSec VPN 环境下</small></li>
           <li>第二步：获取课程链接<br><small>在手机浏览器（如 Safari 等，非微信）中打开 <a href="https://ccc.nottingham.edu.cn/study/" target="_blank" rel="noopener noreferrer">https://ccc.nottingham.edu.cn/study/</a>，找到要签到的课程，长按"查看详情"按钮，选择"复制链接地址"</small></li>
           <li>第三步：粘贴链接并生成二维码<br><small>将复制的链接完整粘贴到下方输入框，时间模式选择"自动（推荐）"，用手机微信扫描生成的二维码即可签到</small></li>
           <li>最佳签到时间窗口：课程结束前10分钟到课程结束时间<br><small>e.g.若日历下课时间为 20:00，则最佳签到时间窗口为 19:50-20:00</small></li>
-          <li>还是不会？只能求助 <a href="#" id="agentLink" rel="noopener noreferrer">AI代理</a></li>
+          <li>还是不会？只能求助 <a href="#" class="agent-link" rel="noopener noreferrer">AI代理</a></li>
         </ul>
       </div>
       <div class="identity-content" id="agentContent" style="display: none;">
@@ -836,8 +836,7 @@
   <footer>
       <p>
         Licensed under <a href="LICENSE" target="_blank">MIT License</a> | 
-        Opensourced in <a href="https://github.com/byronwang2005/CCC-Attendance" target="_blank" rel="noopener noreferrer">GitHub Repository</a> | 
-        Developed by <a href="https://byron.wang" target="_blank" rel="noopener noreferrer">Byron Wang</a>
+        Opensourced in <a href="https://github.com/byronwang2005/CCC-Attendance" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
       </p>
     </footer>
 
@@ -891,9 +890,11 @@
       const humanContent = document.getElementById('humanContent');
       const agentContent = document.getElementById('agentContent');
 
-      document.getElementById('agentLink').addEventListener('click', (e) => {
-        e.preventDefault();
-        document.getElementById('agentBtn').click();
+      document.querySelectorAll('.agent-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          document.getElementById('agentBtn').click();
+        });
       });
 
       identityButtons.forEach(btn => {
