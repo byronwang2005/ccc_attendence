@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="UNNC中国文化课签到二维码生成器 - 选择签到时间模式" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="theme-color" content="#0f2437" />
+  <title>步骤 2 | UNNC中国文化课签到二维码生成器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <h1>
+        <img src="ccc-small.webp" alt="CCC Logo" class="logo" loading="eager" fetchpriority="high" width="100" height="100" />
+        UNNC中国文化课签到二维码生成器
+      </h1>
+    </header>
+
+    <main class="wizard-layout">
+      <section class="stepper" aria-label="步骤进度">
+        <article class="step-card is-done">
+          <span class="step-number">1</span>
+          <div>
+            <strong>身份与链接</strong>
+            <small>已完成</small>
+          </div>
+        </article>
+        <article class="step-card is-active" aria-current="step">
+          <span class="step-number">2</span>
+          <div>
+            <strong>时间模式</strong>
+            <small>设置二维码时间参数</small>
+          </div>
+        </article>
+        <article class="step-card">
+          <span class="step-number">3</span>
+          <div>
+            <strong>二维码</strong>
+            <small>生成并下载图片</small>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel panel-slim">
+        <div class="summary-grid">
+          <article class="summary-card">
+            <span>当前身份</span>
+            <strong id="identityPreview"></strong>
+          </article>
+          <article class="summary-card">
+            <span>课程链接</span>
+            <strong id="linkPreview" class="summary-break"></strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <p class="panel-kicker">Step 2</p>
+          <h2>选择时间模式</h2>
+          <p>自动模式会在生成时取“当前时间 + 1 分钟”；手动模式允许你输入指定日期和时间。</p>
+        </div>
+
+        <div class="radio-grid" role="radiogroup" aria-label="时间模式选择">
+          <label class="choice-card">
+            <input type="radio" name="mode" value="auto" />
+            <div>
+              <strong>自动（推荐）</strong>
+              <small>适合绝大多数情况，生成时自动带入当前时间。</small>
+            </div>
+          </label>
+          <label class="choice-card">
+            <input type="radio" name="mode" value="manual" />
+            <div>
+              <strong>手动</strong>
+              <small>自定义签到时间，适合你已经确定目标时刻的情况。</small>
+            </div>
+          </label>
+        </div>
+
+        <div id="manualTime" class="time-grid" hidden>
+          <div>
+            <label for="year">年</label>
+            <input type="number" id="year" min="2020" max="2035" inputmode="numeric" />
+          </div>
+          <div>
+            <label for="month">月</label>
+            <input type="number" id="month" min="1" max="12" inputmode="numeric" />
+          </div>
+          <div>
+            <label for="day">日</label>
+            <input type="number" id="day" min="1" max="31" inputmode="numeric" />
+          </div>
+          <div>
+            <label for="hour">时</label>
+            <input type="number" id="hour" min="0" max="23" inputmode="numeric" />
+          </div>
+          <div>
+            <label for="minute">分</label>
+            <input type="number" id="minute" min="0" max="59" inputmode="numeric" />
+          </div>
+        </div>
+      </section>
+
+      <section class="panel panel-soft">
+        <div class="panel-header">
+          <p class="panel-kicker">Tips</p>
+          <h2>时间建议</h2>
+        </div>
+        <ul class="guide-list">
+          <li>最佳签到时间窗口通常是课程结束前 10 分钟到课程结束时刻。</li>
+          <li>如果课程表写的是 20:00 下课，常见做法是把时间控制在 19:50 到 20:00 之间。</li>
+          <li>输入手动时间时请注意日期合法性，例如 2 月不会有 30 日。</li>
+        </ul>
+      </section>
+
+      <div class="actions">
+        <button type="button" id="backBtn" class="button-secondary">返回上一步</button>
+        <button type="button" id="nextBtn" class="button-primary">下一步：生成二维码</button>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <p>
+        Licensed under <a href="LICENSE" target="_blank" rel="noopener noreferrer">MIT License</a> |
+        Opensourced in <a href="https://github.com/byronwang2005/CCC-Attendance" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+      </p>
+    </footer>
+
+    <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+  </div>
+
+  <script type="module" src="scripts/time.js"></script>
+</body>
+</html>

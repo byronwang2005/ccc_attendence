@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="UNNC中国文化课签到二维码生成器 - 生成签到二维码" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="theme-color" content="#0f2437" />
+  <title>步骤 3 | UNNC中国文化课签到二维码生成器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <h1>
+        <img src="ccc-small.webp" alt="CCC Logo" class="logo" loading="eager" fetchpriority="high" width="100" height="100" />
+        UNNC中国文化课签到二维码生成器
+      </h1>
+    </header>
+
+    <main class="wizard-layout">
+      <section class="stepper" aria-label="步骤进度">
+        <article class="step-card is-done">
+          <span class="step-number">1</span>
+          <div>
+            <strong>身份与链接</strong>
+            <small>已完成</small>
+          </div>
+        </article>
+        <article class="step-card is-done">
+          <span class="step-number">2</span>
+          <div>
+            <strong>时间模式</strong>
+            <small>已完成</small>
+          </div>
+        </article>
+        <article class="step-card is-active" aria-current="step">
+          <span class="step-number">3</span>
+          <div>
+            <strong>二维码</strong>
+            <small>查看结果并下载</small>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel panel-slim">
+        <div class="summary-grid summary-grid-wide">
+          <article class="summary-card">
+            <span>当前身份</span>
+            <strong id="summaryIdentity"></strong>
+          </article>
+          <article class="summary-card">
+            <span>时间模式</span>
+            <strong id="summaryMode"></strong>
+          </article>
+          <article class="summary-card">
+            <span>课程链接</span>
+            <strong id="summaryUrl" class="summary-break"></strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel qr-panel">
+        <div class="panel-header">
+          <p class="panel-kicker">Step 3</p>
+          <h2>签到二维码</h2>
+          <p>生成成功后会自动下载 <code>qrcode.png</code>，并在下方保留预览。</p>
+        </div>
+
+        <div id="generatedTimeWrap" class="generated-meta" hidden>
+          本次二维码时间：<strong id="generatedTime"></strong>
+        </div>
+
+        <div id="qrcode" class="qrcode-stage" aria-label="生成的二维码">
+          <div class="qrcode-placeholder">
+            <div>二维码将在这里生成</div>
+            <small>进入本页后会自动尝试生成一次</small>
+          </div>
+        </div>
+
+        <div class="actions actions-stack-mobile">
+          <button type="button" id="generateBtn" class="button-primary">生成签到二维码</button>
+          <button type="button" id="downloadBtn" class="button-secondary" hidden>再次下载</button>
+        </div>
+      </section>
+
+      <section class="panel panel-soft">
+        <div class="panel-header">
+          <p class="panel-kicker">Reminder</p>
+          <h2>使用提醒</h2>
+        </div>
+        <ul class="guide-list">
+          <li>使用手机微信扫描二维码完成签到。</li>
+          <li>如果签到页出现“答题”选项，记得继续完成答题流程。</li>
+        </ul>
+      </section>
+
+      <div class="actions">
+        <button type="button" id="backBtn" class="button-secondary">返回上一步</button>
+        <button type="button" id="restartBtn" class="button-secondary">重新开始</button>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <p>
+        Licensed under <a href="LICENSE" target="_blank" rel="noopener noreferrer">MIT License</a> |
+        Opensourced in <a href="https://github.com/byronwang2005/CCC-Attendance" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+      </p>
+    </footer>
+
+    <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+  </div>
+
+  <script type="module" src="scripts/qrcode.js"></script>
+</body>
+</html>
