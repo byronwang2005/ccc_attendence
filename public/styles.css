@@ -107,10 +107,14 @@ h1 {
 }
 
 .logo {
-  width: 84px;
+  display: block;
+  width: auto;
   height: 84px;
+  max-width: 112px;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  flex-shrink: 0;
   filter: drop-shadow(0 12px 24px rgba(16, 38, 59, 0.14));
-  animation: float 6s ease-in-out infinite;
 }
 
 .page-intro {
@@ -610,17 +614,6 @@ input[type="number"]:focus {
   }
 }
 
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-6px);
-  }
-}
-
 @media (max-width: 860px) {
   .stepper,
   .summary-grid,
@@ -668,8 +661,9 @@ input[type="number"]:focus {
   }
 
   .logo {
-    width: 72px;
+    width: auto;
     height: 72px;
+    max-width: 96px;
   }
 
   .qrcode-stage {
