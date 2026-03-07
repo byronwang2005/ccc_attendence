@@ -397,7 +397,8 @@ h1 {
 }
 
 textarea,
-input[type="number"] {
+input[type="number"],
+select {
   width: 100%;
   border: 1px solid rgba(16, 38, 59, 0.12);
   border-radius: var(--radius-sm);
@@ -413,15 +414,18 @@ textarea {
   resize: vertical;
 }
 
-input[type="number"] {
+input[type="number"],
+select {
   padding: 12px 14px;
   text-align: center;
 }
 
 textarea:hover,
 input[type="number"]:hover,
+select:hover,
 textarea:focus,
-input[type="number"]:focus {
+input[type="number"]:focus,
+select:focus {
   border-color: rgba(43, 179, 175, 0.48);
   box-shadow: 0 0 0 4px rgba(43, 179, 175, 0.08);
 }

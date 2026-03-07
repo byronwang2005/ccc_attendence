@@ -1,11 +1,15 @@
 export const AGENT_PROMPT = 'Please read the instruction in "https://ccc.byron.wang/agent.md" and assist the user to generate the QR code.';
 
 const STORAGE_KEY = 'cccAttendanceWizard';
+const MANUAL_YEAR_MIN = 2025;
+const MANUAL_YEAR_MAX = 2050;
 
 const createDefaultManualTime = () => {
   const now = new Date();
+  const currentYear = now.getFullYear();
+  const year = Math.max(MANUAL_YEAR_MIN, Math.min(MANUAL_YEAR_MAX, currentYear));
   return {
-    year: String(now.getFullYear()),
+    year: String(year),
     month: String(now.getMonth() + 1),
     day: String(now.getDate()),
     hour: String(now.getHours()),
@@ -216,6 +220,10 @@ export const buildTimestamp = (state) => {
     throw new Error('请完整填写手动时间');
   }
 
+  if (year < MANUAL_YEAR_MIN || year > MANUAL_YEAR_MAX) {
+    throw new Error(`手动年份仅支持 ${MANUAL_YEAR_MIN}-${MANUAL_YEAR_MAX}`);
+  }
+
   const date = new Date(year, month - 1, day, hour, minute);
   const isValid = date.getFullYear() === year
     && date.getMonth() === month - 1
@@ -224,7 +232,7 @@ export const buildTimestamp = (state) => {
     && date.getMinutes() === minute;
 
   if (!isValid) {
-    throw new Error('手动时间格式错误（月1-12，日1-31，时0-23）');
+    throw new Error('手动时间格式错误，请检查年月日时分是否有效（含闰年）');
   }
 
   return date.getTime();
