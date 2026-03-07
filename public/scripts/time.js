@@ -8,7 +8,8 @@ import {
   readPageMessage,
   redirectTo,
   saveState,
-  showToast
+  showToast,
+  validateCourseUrl
 } from './wizard.js';
 
 const MANUAL_YEAR_MIN = 2025;
@@ -61,6 +62,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const state = loadState();
   if (!state.url) {
     redirectTo('index.html', '请先完成第一步并粘贴课程链接');
+    return;
+  }
+  const urlValidation = validateCourseUrl(state.url);
+  if (!urlValidation.valid) {
+    redirectTo('index.html', urlValidation.message);
     return;
   }
 

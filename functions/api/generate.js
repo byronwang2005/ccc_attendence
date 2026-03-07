@@ -7,14 +7,14 @@ export async function onRequestPost(context) {
     const { url, timestamp } = formData;
 
     if (!url) {
-      return new Response(JSON.stringify({ error: 'Missing URL' }), {
+      return new Response(JSON.stringify({ error: '缺少课程链接' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' }
       });
     }
 
     if (!timestamp) {
-      return new Response(JSON.stringify({ error: 'Missing timestamp' }), {
+      return new Response(JSON.stringify({ error: '缺少时间参数' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' }
       });
@@ -28,7 +28,7 @@ export async function onRequestPost(context) {
 
     const sid = extractScheduleId(url);
     if (!sid) {
-      return new Response(JSON.stringify({ error: 'Invalid URL: Cannot find scheduleId' }), {
+      return new Response(JSON.stringify({ error: '链接无效：未找到课程ID（id 或 scheduleId）' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' }
       });
@@ -47,7 +47,7 @@ export async function onRequestPost(context) {
     });
 
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
+    return new Response(JSON.stringify({ error: '服务异常，请稍后重试' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     });

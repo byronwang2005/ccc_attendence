@@ -198,6 +198,39 @@ export const getIdentityLabel = (identity) => (
   identity === 'agent' ? 'AI代理（Agent）' : '人类（Human）'
 );
 
+export const extractScheduleId = (inputUrl) => {
+  if (!inputUrl || typeof inputUrl !== 'string') {
+    return null;
+  }
+
+  const m1 = inputUrl.match(/[?&]id=([^&#]+)/);
+  const m2 = inputUrl.match(/[?&]scheduleId=([^&#]+)/);
+  return m1 ? m1[1] : (m2 ? m2[1] : null);
+};
+
+export const validateCourseUrl = (inputUrl) => {
+  const value = safeString(inputUrl);
+  if (!value) {
+    return { valid: false, message: '请先粘贴课程详情链接' };
+  }
+
+  try {
+    const parsed = new URL(value);
+    if (!['http:', 'https:'].includes(parsed.protocol)) {
+      return { valid: false, message: '链接格式不正确，请粘贴完整课程详情链接' };
+    }
+  } catch {
+    return { valid: false, message: '链接格式不正确，请粘贴完整课程详情链接' };
+  }
+
+  const scheduleId = extractScheduleId(value);
+  if (!scheduleId) {
+    return { valid: false, message: '链接无效：未找到课程ID（id 或 scheduleId）' };
+  }
+
+  return { valid: true, scheduleId };
+};
+
 const parseInteger = (value) => {
   if (value === '' || value === null || value === undefined) {
     return Number.NaN;
@@ -313,7 +346,7 @@ export const downloadFile = (href, filename) => {
 
 export const parseErrorMessage = (rawText) => {
   if (!rawText) {
-    return '生成失败';
+    return '生成失败，请稍后重试';
   }
 
   try {
@@ -325,5 +358,10 @@ export const parseErrorMessage = (rawText) => {
     // Ignore JSON parse failures and fall back to raw text.
   }
 
-  return rawText.trim();
+  const message = rawText.trim();
+  if (!message || message.startsWith('<!DOCTYPE html')) {
+    return '生成失败，请稍后重试';
+  }
+
+  return message;
 };

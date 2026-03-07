@@ -5,7 +5,8 @@ import {
   loadState,
   readPageMessage,
   saveState,
-  showToast
+  showToast,
+  validateCourseUrl
 } from './wizard.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -62,8 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   nextBtn.addEventListener('click', () => {
     const url = urlInput.value.trim();
-    if (!url) {
-      showToast('请先完成当前步骤', 'error');
+    const validation = validateCourseUrl(url);
+    if (!validation.valid) {
+      showToast(validation.message, 'error');
       urlInput.focus();
       return;
     }

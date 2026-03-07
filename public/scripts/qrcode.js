@@ -10,7 +10,8 @@ import {
   parseErrorMessage,
   readPageMessage,
   redirectTo,
-  showToast
+  showToast,
+  validateCourseUrl
 } from './wizard.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -19,6 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const state = loadState();
   if (!state.url) {
     redirectTo('index.html', '请先完成前两步后再生成二维码');
+    return;
+  }
+  const urlValidation = validateCourseUrl(state.url);
+  if (!urlValidation.valid) {
+    redirectTo('index.html', urlValidation.message);
     return;
   }
 
@@ -116,6 +122,9 @@ document.addEventListener('DOMContentLoaded', () => {
       downloadFile(currentImageUrl, 'qrcode.png');
       showToast('二维码已生成并下载！如果有“答题”选项，请记得继续完成。');
     } catch (error) {
+      const message = error && error.message === 'Failed to fetch'
+        ? '网络异常，请检查网络后重试'
+        : error.message;
       if (previousImageUrl) {
         currentImageUrl = previousImageUrl;
         renderImage(previousImageUrl);
@@ -128,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
         generatedTimeWrap.hidden = true;
         downloadBtn.hidden = true;
       }
-      showToast(`二维码生成失败：${error.message}`, 'error');
+      showToast(`二维码生成失败：${message}`, 'error');
     } finally {
       generateBtn.disabled = false;
       generateBtn.textContent = currentImageUrl ? '重新生成二维码' : '生成签到二维码';
