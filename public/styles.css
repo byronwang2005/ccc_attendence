@@ -99,17 +99,40 @@ h1 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: 12px;
   flex-wrap: wrap;
   margin: 0;
-  font-size: clamp(26px, 4vw, 38px);
+  font-size: clamp(20px, 2.2vw, 28px);
+  font-weight: 600;
   line-height: 1.15;
+}
+
+.site-title-text {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 6px;
+  letter-spacing: 0.01em;
+  background: linear-gradient(110deg, #0f2437 0%, #2b5f7f 52%, #2bb3af 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.site-title-text::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(15, 36, 55, 0.16), rgba(43, 179, 175, 0.56), rgba(15, 36, 55, 0.16));
 }
 
 .logo {
   display: block;
   width: auto;
-  height: 84px;
+  height: 72px;
   max-width: 112px;
   aspect-ratio: 4 / 3;
   object-fit: contain;
@@ -653,6 +676,16 @@ select:focus {
     padding: 18px 0 28px;
   }
 
+  h1 {
+    gap: 10px;
+    font-size: clamp(18px, 5.2vw, 23px);
+    line-height: 1.22;
+  }
+
+  .site-title-text {
+    padding-bottom: 4px;
+  }
+
   .panel {
     padding: 20px;
     border-radius: 18px;
@@ -682,7 +715,7 @@ select:focus {
 
   .logo {
     width: auto;
-    height: 72px;
+    height: 58px;
     max-width: 96px;
   }
 
