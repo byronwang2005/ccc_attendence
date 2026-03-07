@@ -18,13 +18,18 @@ const createDefaultManualTime = () => {
 };
 
 const createDefaultState = () => ({
-  identity: 'human',
+  identity: '',
   url: '',
   timeMode: 'auto',
   manualTime: createDefaultManualTime()
 });
 
-const normalizeIdentity = (identity) => (identity === 'agent' ? 'agent' : 'human');
+const normalizeIdentity = (identity) => {
+  if (identity === 'agent' || identity === 'human') {
+    return identity;
+  }
+  return '';
+};
 const normalizeTimeMode = (mode) => (mode === 'manual' ? 'manual' : 'auto');
 
 const safeString = (value, fallback = '') => {
@@ -195,7 +200,7 @@ export const initStepNavigation = (currentStep) => {
 };
 
 export const getIdentityLabel = (identity) => (
-  identity === 'agent' ? 'AI代理（Agent）' : '人类（Human）'
+  identity === 'agent' ? 'AI代理（Agent）' : (identity === 'human' ? '人类（Human）' : '未选择')
 );
 
 export const extractScheduleId = (inputUrl) => {

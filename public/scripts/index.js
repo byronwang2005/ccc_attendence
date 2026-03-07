@@ -19,15 +19,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const urlInput = document.getElementById('urlInput');
   const nextBtn = document.getElementById('nextBtn');
   initStepNavigation(1);
+  let selectedIdentity = '';
 
-  const applyIdentity = (identity) => {
-    const nextIdentity = identity === 'agent' ? 'agent' : 'human';
+  const applyIdentity = (identity, { persist = true } = {}) => {
+    const nextIdentity = identity === 'agent' || identity === 'human' ? identity : '';
+    selectedIdentity = nextIdentity;
     identityButtons.forEach((button) => {
       button.classList.toggle('active', button.dataset.identity === nextIdentity);
     });
     humanContent.hidden = nextIdentity !== 'human';
     agentContent.hidden = nextIdentity !== 'agent';
-    saveState({ identity: nextIdentity });
+    if (persist) {
+      saveState({ identity: nextIdentity });
+    }
   };
 
   const setNextButtonDisabled = (isDisabled) => {
@@ -40,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   urlInput.value = state.url;
-  applyIdentity(state.identity);
+  applyIdentity(state.identity, { persist: false });
   syncNextButtonState();
 
   identityButtons.forEach((button) => {
@@ -62,6 +66,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   nextBtn.addEventListener('click', () => {
+    if (!selectedIdentity) {
+      showToast('请先选择身份（人类或AI代理）', 'error');
+      return;
+    }
+
     const url = urlInput.value.trim();
     const validation = validateCourseUrl(url);
     if (!validation.valid) {
@@ -70,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    saveState({ url });
+    saveState({ url, identity: selectedIdentity });
     window.location.href = 'time.html';
   });
 });
