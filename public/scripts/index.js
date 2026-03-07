@@ -1,6 +1,7 @@
 import {
   AGENT_PROMPT,
   bindCopyButton,
+  initStepNavigation,
   loadState,
   readPageMessage,
   saveState,
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const agentContent = document.getElementById('agentContent');
   const urlInput = document.getElementById('urlInput');
   const nextBtn = document.getElementById('nextBtn');
+  initStepNavigation(1);
 
   const applyIdentity = (identity) => {
     const nextIdentity = identity === 'agent' ? 'agent' : 'human';
@@ -27,8 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
     saveState({ identity: nextIdentity });
   };
 
+  const setNextButtonDisabled = (isDisabled) => {
+    nextBtn.classList.toggle('is-disabled', isDisabled);
+    nextBtn.setAttribute('aria-disabled', String(isDisabled));
+  };
+
   const syncNextButtonState = () => {
-    nextBtn.disabled = !urlInput.value.trim();
+    setNextButtonDisabled(!urlInput.value.trim());
   };
 
   urlInput.value = state.url;
@@ -56,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
   nextBtn.addEventListener('click', () => {
     const url = urlInput.value.trim();
     if (!url) {
-      showToast('请先粘贴课程详情链接', 'error');
+      showToast('请先完成当前步骤', 'error');
       urlInput.focus();
       return;
     }

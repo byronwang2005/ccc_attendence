@@ -25,21 +25,21 @@
 
     <main class="wizard-layout">
       <section class="stepper" aria-label="步骤进度">
-        <article class="step-card is-done">
+        <article class="step-card is-done" data-step="1">
           <span class="step-number">1</span>
           <div>
             <strong>身份与链接</strong>
             <small>已完成</small>
           </div>
         </article>
-        <article class="step-card is-active" aria-current="step">
+        <article class="step-card is-active" aria-current="step" data-step="2">
           <span class="step-number">2</span>
           <div>
             <strong>时间模式</strong>
             <small>设置二维码时间参数</small>
           </div>
         </article>
-        <article class="step-card">
+        <article class="step-card" data-step="3">
           <span class="step-number">3</span>
           <div>
             <strong>二维码</strong>
@@ -80,7 +80,7 @@
             <input type="radio" name="mode" value="manual" />
             <div>
               <strong>手动</strong>
-              <small>自定义签到时间，适合你已经确定目标时刻的情况。</small>
+              <small>自定义签到时间，通常用于提前准备二维码。</small>
             </div>
           </label>
         </div>

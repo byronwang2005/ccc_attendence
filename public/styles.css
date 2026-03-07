@@ -144,6 +144,7 @@ h1 {
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.58);
   box-shadow: 0 12px 28px var(--shadow-soft);
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
 }
 
 .step-card strong,
@@ -163,6 +164,20 @@ h1 {
 
 .step-card.is-done {
   background: linear-gradient(180deg, rgba(15, 36, 55, 0.1), rgba(255, 255, 255, 0.92));
+}
+
+.step-card.is-clickable-back {
+  cursor: pointer;
+}
+
+.step-card.is-clickable-back:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 30px rgba(15, 36, 55, 0.14);
+  border-color: rgba(15, 36, 55, 0.24);
+}
+
+.step-card.is-locked-step {
+  cursor: not-allowed;
 }
 
 .step-number {
@@ -361,12 +376,13 @@ h1 {
   box-shadow: 0 14px 28px rgba(15, 36, 55, 0.16);
 }
 
-.button-primary:hover:not(:disabled) {
+.button-primary:hover:not(:disabled):not(.is-disabled) {
   transform: translateY(-1px);
   box-shadow: 0 18px 34px rgba(15, 36, 55, 0.2);
 }
 
 .button-primary:disabled,
+.button-primary.is-disabled,
 .button-secondary:disabled,
 .copy-btn:disabled {
   cursor: not-allowed;

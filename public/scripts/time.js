@@ -3,6 +3,7 @@ import {
   collectManualTime,
   fillManualTimeInputs,
   getIdentityLabel,
+  initStepNavigation,
   loadState,
   readPageMessage,
   redirectTo,
@@ -25,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const modeInputs = Array.from(document.querySelectorAll('input[name="mode"]'));
   const backBtn = document.getElementById('backBtn');
   const nextBtn = document.getElementById('nextBtn');
+  initStepNavigation(2);
 
   linkPreview.textContent = state.url;
   identityPreview.textContent = getIdentityLabel(state.identity);

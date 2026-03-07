@@ -140,6 +140,56 @@ export const redirectTo = (path, message, type = 'error') => {
   window.location.replace(url.toString());
 };
 
+const STEP_PATHS = {
+  1: 'index.html',
+  2: 'time.html',
+  3: 'qrcode.html'
+};
+
+export const initStepNavigation = (currentStep) => {
+  const cards = Array.from(document.querySelectorAll('.step-card[data-step]'));
+  if (!cards.length) {
+    return;
+  }
+
+  const handleStepClick = (targetStep) => {
+    if (targetStep < currentStep) {
+      window.location.href = STEP_PATHS[targetStep];
+      return;
+    }
+
+    if (targetStep > currentStep) {
+      showToast('请先完成当前步骤', 'error');
+    }
+  };
+
+  cards.forEach((card) => {
+    const targetStep = Number.parseInt(card.dataset.step || '', 10);
+    if (![1, 2, 3].includes(targetStep)) {
+      return;
+    }
+
+    card.tabIndex = 0;
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', `跳转到第 ${targetStep} 步`);
+
+    if (targetStep < currentStep) {
+      card.classList.add('is-clickable-back');
+    } else if (targetStep > currentStep) {
+      card.classList.add('is-locked-step');
+    }
+
+    card.addEventListener('click', () => handleStepClick(targetStep));
+    card.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') {
+        return;
+      }
+      event.preventDefault();
+      handleStepClick(targetStep);
+    });
+  });
+};
+
 export const getIdentityLabel = (identity) => (
   identity === 'agent' ? 'AI代理（Agent）' : '人类（Human）'
 );

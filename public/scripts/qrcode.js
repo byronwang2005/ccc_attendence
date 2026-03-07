@@ -5,6 +5,7 @@ import {
   formatDateTime,
   getIdentityLabel,
   getTimeModeLabel,
+  initStepNavigation,
   loadState,
   parseErrorMessage,
   readPageMessage,
@@ -31,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const downloadBtn = document.getElementById('downloadBtn');
   const backBtn = document.getElementById('backBtn');
   const restartBtn = document.getElementById('restartBtn');
+  initStepNavigation(3);
 
   let currentImageUrl = '';
 
