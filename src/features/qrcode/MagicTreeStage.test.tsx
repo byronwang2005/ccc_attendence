@@ -9,7 +9,7 @@ const stage = () => ({ destroy: vi.fn(), setQr: vi.fn() });
 afterEach(() => { cleanup(); create.mockReset(); });
 
 describe('MagicTreeStage', () => {
-  it('supports repeated keyboard toggles without exposing an image alternative', async () => {
+  it('supports repeated keyboard toggles with the tree as the default view', async () => {
     const instance = stage(); create.mockResolvedValue(instance);
     const user = userEvent.setup();
     render(<MagicTreeStage imageUrl="blob:qr" />);
@@ -18,6 +18,8 @@ describe('MagicTreeStage', () => {
     expect(document.querySelector('.magic-tree-stage__controls')).toBeNull();
     button.focus(); await user.keyboard('{Enter}');
     expect(instance.setQr).toHaveBeenLastCalledWith(true);
+    expect(screen.getAllByRole('button')).toHaveLength(1);
+    expect(screen.queryByRole('img')).not.toBeInTheDocument();
     await user.keyboard(' ');
     expect(instance.setQr).toHaveBeenLastCalledWith(false);
     expect(screen.queryByRole('img')).not.toBeInTheDocument();

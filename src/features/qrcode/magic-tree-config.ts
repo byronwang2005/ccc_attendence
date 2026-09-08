@@ -1,11 +1,28 @@
+const rgb = (color: string) => [1, 3, 5].map(offset => parseInt(color.slice(offset, offset + 2), 16));
+const hex = (channels: number[]) => '#' + channels.map(value => Math.round(value).toString(16).padStart(2, '0')).join('').toUpperCase();
+const blend = (a: number[], b: number[], amount: number) => a.map((value, i) => value * (1 - amount) + b[i] * amount);
+const leafColors = ['#E6B65B', '#D99350', '#BC713C', '#ECCB75', '#C98347'] as const;
+
+// Vary hue within each family while keeping luminance stable for local QR thresholding.
+const scanVariants = (color: string) => Array.from({ length: 9 }, (_, i) => {
+  const angle = i * Math.PI * 2 / 9;
+  const red = Math.cos(angle) * 20, blue = Math.sin(angle) * 20;
+  const offsets = [red, -(red * .2126 + blue * .0722) / .7152, blue];
+  return hex(rgb(color).map((value, channel) => value + offsets[channel]));
+});
+const colorDistance = (a: string, b: string) => Math.hypot(...rgb(a).map((value, i) => value - rgb(b)[i]));
+
 /** Pantone Golden Apricot / Autumn Maple inspired screen colors, not official conversions. */
 export const TREE_PALETTE = {
   background: '#F6F1E7',
-  leaf: ['#E6B65B', '#D99350', '#BC713C', '#ECCB75', '#C98347'],
+  leaf: leafColors,
   grass: ['#CBB666', '#DDC681', '#A69A5D', '#D2B259', '#E2D49C'],
-  // Near-equal luminance keeps large colored finder patterns below decoder local-contrast thresholds.
-  scanLeaf: ['#C26031', '#C66025', '#B36431', '#B96418', '#B86330'],
-  scanGrass: ['#827331', '#966E1B', '#936E2B', '#927116', '#787439'],
+  // Screen samples of the approved TCX chips, with small same-family variations:
+  // Honey Mustard 17-1047 (#B59051) and the existing canopy brown,
+  // Dried Herb 17-0627 (#847A59). These are not certified Pantone RGB conversions.
+  // Preserve their different brightnesses; equalizing them makes gold look like grass.
+  scanLeaf: ['#B59051', leafColors[2], leafColors[1], '#BD9859', leafColors[4]],
+  scanGrass: scanVariants('#847A59'),
   stone: ['#E2DAC6', '#DED5BD', '#E8DFCC'],
   bark: '#78543D'
 } as const;
@@ -25,27 +42,34 @@ export function meadowDensity(x: number, z: number, centers: ReadonlyArray<{ x: 
   return 1 - .94 * canopyCoverage(x, z, centers);
 }
 
-/** Adjacent modules have different variants; the square-radius blend never changes QR bits. */
+// Nine visibly different, low-amplitude variants per family; never reshuffle per frame.
+const goldVariants = scanVariants(TREE_PALETTE.scanLeaf[0]).map(rgb);
+const warmVariants = scanVariants(TREE_PALETTE.scanLeaf[1]).map(rgb);
+
+/** Two diagonal leaf-color regions soften across 15%-wide bands, then fade to meadow edges. */
 export function qrModuleColors(size: number) {
   const random = treeRandom();
-  const variants: number[][] = [];
   const colors: string[][] = [];
   for (let y = 0; y < size; y++) {
-    variants[y] = []; colors[y] = [];
+    colors[y] = [];
     for (let x = 0; x < size; x++) {
-      const radius = Math.max(Math.abs(x - (size - 1) / 2), Math.abs(y - (size - 1) / 2)) / ((size - 1) / 2);
-      const t = Math.max(0, Math.min(1, (radius - .45) / .4));
-      const mix = t * t * (3 - 2 * t);
-      const candidates = TREE_PALETTE.scanLeaf.map((inner, variant) => {
-        const outer = TREE_PALETTE.scanGrass[variant];
-        const color = '#' + [1, 3, 5].map(offset => Math.round(
-          parseInt(inner.slice(offset, offset + 2), 16) * (1 - mix) + parseInt(outer.slice(offset, offset + 2), 16) * mix
-        ).toString(16).padStart(2, '0')).join('').toUpperCase();
-        return { variant, color };
-      }).filter(({ variant, color }) => variant !== variants[y][x - 1] && variant !== variants[y - 1]?.[x]
-        && color !== colors[y][x - 1] && color !== colors[y - 1]?.[x]);
-      const chosen = candidates[Math.floor(random() * candidates.length)];
-      variants[y][x] = chosen.variant; colors[y][x] = chosen.color;
+      const nx = size > 1 ? x / (size - 1) : .5;
+      const ny = size > 1 ? y / (size - 1) : .5;
+      const horizontal = smooth((nx - .425) / .15);
+      const vertical = smooth((ny - .425) / .15);
+      const warm = horizontal * (1 - vertical) + (1 - horizontal) * vertical;
+      const radius = Math.max(Math.abs(nx - .5), Math.abs(ny - .5)) * 2;
+      const meadow = smooth((radius - .45) / .4);
+      const neighbors = [colors[y][x - 1], colors[y - 1]?.[x]].filter((color): color is string => !!color);
+      const diagonals = [colors[y - 1]?.[x - 1], colors[y - 1]?.[x + 1]];
+      const candidates = goldVariants.map((gold, variant) => {
+        const leaf = blend(gold, warmVariants[variant], warm);
+        return hex(blend(leaf, rgb(TREE_PALETTE.scanGrass[variant]), meadow));
+      }).filter(color => !diagonals.includes(color));
+      // Comparing final RGB values also protects neighbors inside the blended boundaries.
+      const distinct = candidates.filter(color => neighbors.every(neighbor => colorDistance(color, neighbor) >= 14));
+      const choices = distinct.length ? distinct : candidates.filter(color => !neighbors.includes(color));
+      colors[y][x] = choices[Math.floor(random() * choices.length)];
     }
   }
   return colors;
