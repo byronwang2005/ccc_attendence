@@ -1,7 +1,5 @@
 <div align="center">
-  <img src="public/assets/images/readme-hero.webp" alt="CCC Attendance — 一个签到码，三步搞定" width="100%" />
-  <br />
-  <img src="https://ccc.byron.wang/api/stats.svg" alt="过去一天内每小时生成数量" width="50%" /><img src="https://ccc.byron.wang/api/stats-total.svg" alt="历史累计生成总量" width="50%" />
+  <img src="https://ccc.byron.wang/api/readme.svg" alt="CCC Attendance — 一个签到码，三步搞定；二维码生成趋势与历史累计生成总量" width="100%" />
   <br />
   <a href="https://ccc.byron.wang"><img src="https://img.shields.io/website?url=https%3A%2F%2Fccc.byron.wang&label=site&style=flat-square&labelColor=504E49&color=1B365D" alt="Website"></a>
   <a href="https://github.com/byronwang2005/CCC-Attendance/stargazers"><img src="https://img.shields.io/github/stars/byronwang2005/CCC-Attendance?style=flat-square&label=stars&labelColor=504E49&color=1B365D" alt="Stars"></a>

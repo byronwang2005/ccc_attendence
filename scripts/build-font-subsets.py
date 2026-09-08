@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import base64
 import subprocess
 import tempfile
@@ -13,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE_FONT_DIR = ROOT / "assets-src/fonts"
 PUBLIC_FONT_DIR = ROOT / "public/assets/fonts"
 SOURCE_EXTENSIONS = {".css", ".html", ".js", ".md", ".ts", ".tsx", ".txt"}
-STATS_TEXT = "CCC Attendance 二维码生成趋势最近小时总计峰值最新历史累计生成总量自起统计数据库未配置绑定尚UTC次年月日：·0123456789-., "
+STATS_TEXT = "CCC Attendance 二维码生成趋势最近小时总计峰值最新历史累计生成总量自起统计数据库未配置绑定尚统计暂不可用UTC次年月日：·0123456789-., "
 
 
 def collect_project_characters() -> str:
@@ -45,6 +46,9 @@ def subset_font(source: Path, output: Path, text_file: Path) -> None:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--stats-only", action="store_true", help="Only rebuild embedded SVG fonts")
+    args = parser.parse_args()
     with tempfile.TemporaryDirectory(prefix="ccc-font-build-") as temporary_directory:
         build_dir = Path(temporary_directory)
         project_text = build_dir / "project.txt"
@@ -55,7 +59,8 @@ def main() -> None:
         embedded: dict[str, str] = {}
         for weight in ("W04", "W05"):
             source = SOURCE_FONT_DIR / f"TsangerJinKai02-{weight}.ttf"
-            subset_font(source, PUBLIC_FONT_DIR / f"TsangerJinKai02-{weight}-subset.woff2", project_text)
+            if not args.stats_only:
+                subset_font(source, PUBLIC_FONT_DIR / f"TsangerJinKai02-{weight}-subset.woff2", project_text)
             stats_output = build_dir / f"TsangerJinKai02-{weight}-stats.woff2"
             subset_font(source, stats_output, stats_text)
             embedded[weight] = base64.b64encode(stats_output.read_bytes()).decode("ascii")
